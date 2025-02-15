@@ -1,0 +1,14 @@
+﻿<Window x:Class="ProyectoFinal.VIsta.MostrarClienteView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ProyectoFinal.VIsta"
+        mc:Ignorable="d"
+        Title="MostrarClienteView" Height="450" Width="800">
+    <Grid>
+        <DataGrid x:Name="listaClientes" AutoGenerateColumns="True" ColumnWidth="*" Margin="80,66,80,94"/>
+        <TextBlock HorizontalAlignment="Center" Margin="0,21,0,0" TextWrapping="Wrap" Text="Lista de clientes" FontSize="30" VerticalAlignment="Top"/>
+        <Button Content="Volver" HorizontalAlignment="Center" Margin="0,378,0,0" VerticalAlignment="Top" FontSize="23" Click="volver"/>
+    </Grid>
+</Window>

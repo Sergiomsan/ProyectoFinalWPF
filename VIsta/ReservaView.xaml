@@ -1,0 +1,57 @@
+﻿<Window x:Class="ProyectoFinal.VIsta.ReservaView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ProyectoFinal.VIsta"
+        mc:Ignorable="d"
+        Title="ReservaView" Height="450" Width="800">
+    <Grid>
+        <TextBox TextWrapping="Wrap" TextAlignment="Center" Text="RESERVA" FontSize="20" Margin="72,10,326,379"/>
+        <Grid ShowGridLines="True" Margin="72,82,326,40">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+            </Grid.RowDefinitions>
+            <TextBox x:Name="txtIdReserva" Grid.Column="1" HorizontalAlignment="Center" TextWrapping="Wrap" Text="{Binding Id, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" Width="65" Height="17"/>
+            <TextBox x:Name="txtDni" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Center" TextWrapping="Wrap" Text="{Binding Dni, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" Width="65" Height="17"/>
+            <TextBox x:Name="txtIdHabitacion" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Center" TextWrapping="Wrap" Text="{Binding Id_habitacion, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" Width="65" Height="18"/>
+            <TextBox x:Name="txtfechaInicio" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Center" TextWrapping="Wrap" Text="{Binding Fecha_inicio, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" Width="120" Height="17"/>
+            <TextBox x:Name="txtfechaFin" Grid.Column="1" Grid.Row="4" HorizontalAlignment="Center" TextWrapping="Wrap" Text="{Binding Fecha_Fin, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" Width="120" Height="18"/>
+            <TextBox x:Name="txtEstado" Grid.Column="1" Grid.Row="5" HorizontalAlignment="Center" TextWrapping="Wrap" Text="{Binding Estado, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" Width="66" Height="18"/>
+            <TextBlock HorizontalAlignment="Center" TextWrapping="Wrap" Text="id_reserva" VerticalAlignment="Center" Width="76" Height="15"/>
+            <TextBlock Grid.Row="1" HorizontalAlignment="Center" TextWrapping="Wrap" Text="dni" VerticalAlignment="Center" Width="76" Height="15"/>
+            <TextBlock Grid.Row="2" HorizontalAlignment="Center" TextWrapping="Wrap" Text="id_habitacion" VerticalAlignment="Center" Width="76" Height="16"/>
+            <TextBlock Grid.Row="3" HorizontalAlignment="Center" TextWrapping="Wrap" Text="fecha_inicio" VerticalAlignment="Center" Width="76" Height="15"/>
+            <TextBlock Grid.Row="4" HorizontalAlignment="Center" TextWrapping="Wrap" Text="fecha_fin" VerticalAlignment="Center" Width="76" Height="16"/>
+            <TextBlock Grid.Row="5" HorizontalAlignment="Center" TextWrapping="Wrap" Text="estado" VerticalAlignment="Center" Width="76" Height="16"/>
+
+            <Button x:Name="btnGuardar" Grid.Row="6" Content="Guardar" HorizontalAlignment="Center" VerticalAlignment="Center" Height="20" Width="47" Click="btnGuardar_Click"/>
+            <Button x:Name="btnLimpiar" Grid.Column="1" Grid.Row="6" Content="Limpiar" HorizontalAlignment="Center" VerticalAlignment="Center" Height="20" Width="43" Click="btnLimpiar_Click"/>
+        </Grid>
+
+        <StackPanel Margin="492,65,10,256">
+            <TextBlock Text="Operaciones CRUD" FontSize="16" HorizontalAlignment="Center"/>
+            <RadioButton x:Name="btnInsertar" IsChecked="true" Content="Insertar" HorizontalAlignment="Left" Margin="10,5,0,0" VerticalAlignment="Top" GroupName="OperacionCRUD" Checked="insertarReserva"/>
+            <RadioButton x:Name="btnLeer" Content="Leer" HorizontalAlignment="Left" Margin="10,5,0,0" VerticalAlignment="Top" GroupName="OperacionCRUD" Checked="leerReserva"/>
+            <RadioButton x:Name="btnActualizar" Content="Actualizar" HorizontalAlignment="Left" Margin="10,5,0,0" VerticalAlignment="Top" GroupName="OperacionCRUD" Checked="actualizarReserva"/>
+            <RadioButton x:Name="btnBorrar" Content="Borrar" HorizontalAlignment="Left" Margin="10,5,0,0" VerticalAlignment="Top" GroupName="OperacionCRUD" Checked="borrarReserva"/>
+        </StackPanel>
+        <StackPanel Margin="492,200,10,32">
+            <TextBlock x:Name="textoIdBuscar" TextWrapping="Wrap" HorizontalAlignment="Center" FontSize="16"><Run Text="Introduce el"/><Run Language="es-es" Text=" id_habitacion"/></TextBlock>
+            <TextBox x:Name="txtIdBuscar" TextWrapping="Wrap" Text="" Margin="12" Width="auto" Height="40" FontSize="16"/>
+            <Button x:Name="btnBuscar" Content="Buscar" Width="178" FontSize="16" Click="btnBuscar_Click_1" />
+            <Button Content="Leer Todos" FontSize="16" Width="178" Margin="0,10,0,0" Click="leerTodos"/>
+            <Button Content="Volver" FontSize="16" Width="178" Margin="0,10,0,0" Click="volverAlInicio"/>
+        </StackPanel>
+    </Grid>
+</Window>
