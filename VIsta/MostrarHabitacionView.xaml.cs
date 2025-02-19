@@ -16,9 +16,6 @@ using ProyectoFinal.VistaModelo;
 
 namespace ProyectoFinal.VIsta
 {
-    /// <summary>
-    /// Lógica de interacción para MostrarHabitacionView.xaml
-    /// </summary>
     public partial class MostrarHabitacionView : Window
     {
         public Window habitacionView;

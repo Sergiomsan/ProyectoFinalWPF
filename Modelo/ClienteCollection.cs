@@ -18,7 +18,6 @@ namespace ProyectoFinal.Modelo
 
         try
         {
-            // Obtener una conexión abierta a la BD
             MySqlConnection conexionBD = Conexion.obtenerConexionAbierta();
 
             if (conexionBD == null)
@@ -40,13 +39,10 @@ namespace ProyectoFinal.Modelo
                         using var comando = new MySqlCommand(consulta, conexionBD);
                         comando.Prepare();
 
-                        // Ejecución del comando
                         using var reader = comando.ExecuteReader();
 
                         if (reader.HasRows)
                         {
-
-                            // Obtención del cursor con el resultado de una consulta
                             while (reader.Read())
                             {
                                 Cliente producto = new Cliente();
@@ -76,7 +72,6 @@ namespace ProyectoFinal.Modelo
             }
             finally
             {
-                // siempre se cierra la conexion
                 Conexion.cerrarConexion();
             }
             return lista;

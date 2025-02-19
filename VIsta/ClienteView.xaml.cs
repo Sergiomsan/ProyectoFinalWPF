@@ -15,9 +15,6 @@ using ProyectoFinal.Modelo;
 
 namespace ProyectoFinal.VIsta
 {
-    /// <summary>
-    /// Lógica de interacción para ClienteView.xaml
-    /// </summary>
     public partial class ClienteView : Window
     {
         private Window clienteView;

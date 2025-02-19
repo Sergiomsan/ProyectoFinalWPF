@@ -17,9 +17,6 @@ using ProyectoFinal.VistaModelo;
 
 namespace ProyectoFinal.VIsta
 {
-    /// <summary>
-    /// Lógica de interacción para ReservaView.xaml
-    /// </summary>
     public partial class ReservaView : Window
     {
         public Window window;
@@ -35,11 +32,8 @@ namespace ProyectoFinal.VIsta
             InitializeComponent();
             DataContext = reservaViewModel;
 
-            // Utilizado para que aparezca información en la
-            // consola de Visual Studio
             System.Diagnostics.Debug.WriteLine("Inicio Aplicación");
 
-            //cargarCategorias();
 
             reservaViewModel.limpiar();
         }
@@ -49,11 +43,7 @@ namespace ProyectoFinal.VIsta
             this.window = window;
             DataContext = reservaViewModel;
 
-            // Utilizado para que aparezca información en la
-            // consola de Visual Studio
             System.Diagnostics.Debug.WriteLine("Inicio Aplicación");
-
-            //cargarCategorias();
 
             reservaViewModel.limpiar();
         }
@@ -68,8 +58,6 @@ namespace ProyectoFinal.VIsta
             try
             {
                 reservaViewModel.buscarReserva();
-
-                //asignarCategoria(reservaViewModel.Id);
             }
             catch (Exception exc)
             {
@@ -107,7 +95,6 @@ namespace ProyectoFinal.VIsta
             {
                 try
                 {
-                    //reservaViewModel.actualizarHabitacion();
                     MessageBox.Show("Producto Actualizado");
                     reservaViewModel.limpiar();
                 }
@@ -120,7 +107,6 @@ namespace ProyectoFinal.VIsta
             {
                 try
                 {
-                    //reservaViewModel.eliminarHabitacion();
                     MessageBox.Show("Producto Eliminado");
                     reservaViewModel.limpiar();
                 }
@@ -134,7 +120,6 @@ namespace ProyectoFinal.VIsta
         {
             try
             {
-                //reservaViewModel.actualizarProducto();
                 MessageBox.Show("Producto Actualizado");
                 reservaViewModel.limpiar();
             }

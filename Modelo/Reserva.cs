@@ -76,7 +76,6 @@ namespace ProyectoFinal.Modelo
             {
                 try
                 {
-                    // Obtener una conexión abierta a la BD
                     MySqlConnection conexionBD = Conexion.obtenerConexionAbierta();
 
                     if (conexionBD == null)
@@ -87,7 +86,6 @@ namespace ProyectoFinal.Modelo
                     {
                         try
                         {
-                            // comando a ejecutar en la BD
                             String consulta =
                                 "SELECT id_reserva, dni, id_habitacion," +
                                      "fecha_inicio, fecha_fin, " +
@@ -100,12 +98,10 @@ namespace ProyectoFinal.Modelo
                             comando.Parameters.AddWithValue("@idReserva", codigoReserva);
                             comando.Prepare();
 
-                            // Ejecución del comando
                             using var reader = comando.ExecuteReader();
 
                             if (reader.HasRows)
                             {
-                                // Obtención del cursor con el resultado de una consulta
                                 while (reader.Read())
                                 {
                                     Reserva.idReserva = reader.GetInt32(0);
@@ -134,7 +130,6 @@ namespace ProyectoFinal.Modelo
                 }
                 finally
                 {
-                    // siempre se cierra la conexion
                     Conexion.cerrarConexion();
                 }
             }
@@ -154,7 +149,6 @@ namespace ProyectoFinal.Modelo
 
             try
             {
-                // Obtener una conexión abierta a la BD
                 MySqlConnection conexionBD = Conexion.obtenerConexionAbierta();
 
                 if (conexionBD == null)
@@ -166,8 +160,6 @@ namespace ProyectoFinal.Modelo
                 {
                     try
                     {
-                        // Para modificar, verificar primero que exista el Reserva.
-                        // comando a ejecutar en la BD
                         String consulta =
                             "SELECT id_reserva " +
                                  "FROM reserva WHERE id_reserva = @idReserva LIMIT 1";
@@ -177,7 +169,6 @@ namespace ProyectoFinal.Modelo
                         comando.Parameters.AddWithValue("@idReserva", codigoReserva);
                         comando.Prepare();
 
-                        // Ejecución del comando
                         using var reader = comando.ExecuteReader();
 
                         if (reader.HasRows)
@@ -202,7 +193,6 @@ namespace ProyectoFinal.Modelo
             }
             finally
             {
-                // siempre se cierra la conexion
                 Conexion.cerrarConexion();
             }
         }
@@ -212,63 +202,51 @@ namespace ProyectoFinal.Modelo
             bool operacion_ok = false;
             try
             {
-                // No permitir guardar registros con datos vacios
-                if (Reserva.idReserva != 0 &&
-                    Reserva.dniCliente != "" &&
+                if (Reserva.dniCliente != "" &&
                     Reserva.idHabitacion != 0 &&
-                    Reserva.fechaInicio != null &&
-                    Reserva.fechaFin != null &&
+                    Reserva.fechaInicio != DateTime.MinValue &&
+                    Reserva.fechaFin != DateTime.MinValue &&
                     Reserva.estado != "")
                 {
-                    // Verificar si existe el registro. No se puede dar de alta
-                    // un registro si ya existe
                     try
                     {
-                        if (!existeReserva(Reserva.idReserva))
+                        MySqlConnection conexionBD = Conexion.obtenerConexionAbierta();
+
+                        if (conexionBD == null)
                         {
-                            // Obtener una conexión abierta a la BD
-                            MySqlConnection conexionBD = Conexion.obtenerConexionAbierta();
-
-                            if (conexionBD == null)
-                            {
-                                throw new Exception("Fallo en Conexion a BD");
-                            }
-                            else
-                            {
-                                try
-                                {
-                                    string sql = "INSERT INTO reserva (id_reserva, " +
-                                        "dni, id_habitacion, fecha_inicio, fecha_fin, estado" +
-                                        ") VALUES (@idReserva, @dni, @idHabitacion, " +
-                                        "@fechaInicio, @fechaFin, @estado)";
-
-                                    // comando a ejecutar en la BD
-                                    using var comando = new MySqlCommand(sql, conexionBD);
-                                    comando.Parameters.AddWithValue("@idReserva", Reserva.idReserva);
-                                    comando.Parameters.AddWithValue("@dni", Reserva.dniCliente);
-                                    comando.Parameters.AddWithValue("@idHabitacion", Reserva.idHabitacion);
-                                    comando.Parameters.AddWithValue("@fechaInicio", Reserva.fechaInicio);
-                                    comando.Parameters.AddWithValue("@fechaFin", Reserva.fechaFin);
-                                    comando.Parameters.AddWithValue("@estado", Reserva.estado);
-                                    comando.Prepare();
-
-                                    // Ejecución del comando
-                                    comando.ExecuteNonQuery();
-
-                                    operacion_ok = true;
-                                    return operacion_ok;
-
-                                }
-                                catch (MySqlException ex)
-                                {
-                                    throw new Exception("Incidencia al guardar Reserva: " + ex.Message);
-                                }
-                            }
+                            throw new Exception("Fallo en Conexion a BD");
                         }
                         else
                         {
-                            throw new Exception("Imposible guardar - Reserva ya existe");
+                            try
+                            {
+                                string sql = "INSERT INTO reserva (" +
+                                    "dni, id_habitacion, fecha_inicio, fecha_fin, estado" +
+                                    ") VALUES (@dni, @idHabitacion, " +
+                                    "@fechaInicio, @fechaFin, @estado)";
+
+                                using var comando = new MySqlCommand(sql, conexionBD);
+
+                                comando.Parameters.AddWithValue("@dni", Reserva.dniCliente);
+                                comando.Parameters.AddWithValue("@idHabitacion", Reserva.idHabitacion);
+                                comando.Parameters.AddWithValue("@fechaInicio", Reserva.fechaInicio);
+                                comando.Parameters.AddWithValue("@fechaFin", Reserva.fechaFin);
+                                comando.Parameters.AddWithValue("@estado", Reserva.estado);
+                                comando.Prepare();
+
+                                // Ejecución del comando
+                                comando.ExecuteNonQuery();
+
+                                operacion_ok = true;
+                                return operacion_ok;
+
+                            }
+                            catch (MySqlException ex)
+                            {
+                                throw new Exception("Incidencia al guardar Reserva: " + ex.Message);
+                            }
                         }
+                        
                     }
                     catch (MySqlException ex)
                     {
@@ -276,7 +254,6 @@ namespace ProyectoFinal.Modelo
                     }
                     finally
                     {
-                        // siempre se cierra la conexion
                         Conexion.cerrarConexion();
                     }
                 }
@@ -297,14 +274,12 @@ namespace ProyectoFinal.Modelo
 
             bool operacion_ok = false;
 
-            // No permitir modificar registros con datos vacios
             if (reserva.idReserva != 0 && reserva.dniCliente != "" &&
                 reserva.idHabitacion != 0 && reserva.fechaInicio != DateTime.MinValue &&
                 reserva.fechaFin != DateTime.MinValue && reserva.estado != "")
             {
                 if (existeReserva(reserva.idReserva))
                 {
-                    // Modificar datos si no son identicos a los que existen en la BD.
                     ReservaEnBD = buscarReserva(reserva.idReserva);
 
                     if ((reserva.dniCliente.Equals(ReservaEnBD.dniCliente) ||
@@ -316,7 +291,6 @@ namespace ProyectoFinal.Modelo
                     {
                         try
                         {
-                            // Obtener una conexión abierta a la BD
                             MySqlConnection conexionBD = Conexion.obtenerConexionAbierta();
 
                             if (conexionBD == null)
@@ -332,7 +306,7 @@ namespace ProyectoFinal.Modelo
                                     "fecha_inicio=@fechaInicio, fecha_fin=@fechaFin, " +
                                     "estado=@estado " +
                                     "WHERE id_reserva=@idReserva;";
-                                    // comando a ejecutar en la BD
+
                                     using var comando = new MySqlCommand(sql, conexionBD);
 
                                     comando.Parameters.AddWithValue("@idReserva", reserva.idReserva);
@@ -343,7 +317,6 @@ namespace ProyectoFinal.Modelo
                                     comando.Parameters.AddWithValue("@estado", reserva.estado);
                                     comando.Prepare();
 
-                                    // Ejecución del comando
                                     comando.ExecuteNonQuery();
 
                                     operacion_ok = true;
@@ -361,7 +334,6 @@ namespace ProyectoFinal.Modelo
                         }
                         finally
                         {
-                            // siempre se cierra la conexion
                             Conexion.cerrarConexion();
                         }
                     }
@@ -385,14 +357,12 @@ namespace ProyectoFinal.Modelo
         {
             bool operacion_ok = false;
 
-            // No se puede eliminar Reserva si codigo vacio
             if (Reserva.idReserva != 0)
             {
                 if (existeReserva(Reserva.idReserva))
                 {
                     try
                     {
-                        // Obtener una conexión abierta a la BD
                         MySqlConnection conexionBD = Conexion.obtenerConexionAbierta();
 
                         if (conexionBD == null)
@@ -405,13 +375,12 @@ namespace ProyectoFinal.Modelo
                             {
                                 string sql = "DELETE FROM reserva " +
                                     "WHERE id_reserva=@idReserva;";
-                                // comando a ejecutar en la BD
+
                                 using var comando = new MySqlCommand(sql, conexionBD);
 
                                 comando.Parameters.AddWithValue("@idReserva", Reserva.idReserva);
                                 comando.Prepare();
 
-                                // Ejecución del comando
                                 comando.ExecuteNonQuery();
 
                                 operacion_ok = true;
@@ -429,7 +398,6 @@ namespace ProyectoFinal.Modelo
                     }
                     finally
                     {
-                        // siempre se cierra la conexion
                         Conexion.cerrarConexion();
                     }
                 }

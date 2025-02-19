@@ -9,6 +9,7 @@ namespace ProyectoFinal
     public partial class MainWindow : Window
     {
         public Window window;
+
         public MainWindow()
         {
             InitializeComponent();

@@ -16,9 +16,6 @@ using ProyectoFinal.VistaModelo;
 
 namespace ProyectoFinal.VIsta
 {
-    /// <summary>
-    /// Lógica de interacción para HabitacionView.xaml
-    /// </summary>
     public partial class HabitacionView : Window
     {
         public Window window;
@@ -102,7 +99,7 @@ namespace ProyectoFinal.VIsta
 
         private void btnInsertar_Checked(object sender, RoutedEventArgs e)
         {
-            txtIdHabit.IsReadOnly = false;
+            txtIdHabit.IsReadOnly = true;
             txtNumero.IsReadOnly = false;
             txtEstado.IsReadOnly = false;
             txtTipo.IsReadOnly = false;

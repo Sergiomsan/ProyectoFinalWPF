@@ -11,12 +11,12 @@ namespace ProyectoFinal.VistaModelo
 {
     public partial class ReservaViewModel : INotifyPropertyChanged
     {
-        private int id;
-        private string dniCliente;
-        private int idHabitacion;
+        private int id = 0;
+        private string dniCliente = "";
+        private int idHabitacion = 0;
         private DateTime fechaInicio;
         private DateTime fechaFin;
-        private string estado;
+        private string estado = "";
         public int Id
         {
             get { return id; }
@@ -89,7 +89,7 @@ namespace ProyectoFinal.VistaModelo
 
         public void buscarReserva()
         {
-            Modelo.Reserva reserva = new Modelo.Reserva();
+            Reserva reserva = new();
 
             try
             {
@@ -140,7 +140,6 @@ namespace ProyectoFinal.VistaModelo
 
                 if (!Reserva.guardarReserva(Reserva))
                 {
-                    // Reserva no guardado correctamente
                     throw new Exception("Fallo al Guardar Reserva");
                 }
             }
@@ -158,7 +157,6 @@ namespace ProyectoFinal.VistaModelo
 
                 if (!Reserva.actualizarReserva(Reserva))
                 {
-                    // Reserva no guardado correctamente
                     throw new Exception("Fallo al Actualizar Reserva");
                 }
             }
@@ -178,7 +176,6 @@ namespace ProyectoFinal.VistaModelo
 
                 if (!Reserva.eliminarReserva(Reserva))
                 {
-                    // Reserva no eliminado correctamente
                     throw new Exception("Fallo al Eliminar Reserva");
                 }
             }
@@ -215,8 +212,6 @@ namespace ProyectoFinal.VistaModelo
         {
             ReservaCollection reservaColl = new ReservaCollection();
             List<Reserva> obsReservas = new List<Reserva>();
-
-            // llamar y obtener las categorias
 
             obsReservas = reservaColl.CargarReservas();
 

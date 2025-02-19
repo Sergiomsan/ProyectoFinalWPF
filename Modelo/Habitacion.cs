@@ -66,378 +66,171 @@ namespace ProyectoFinal.Modelo
             piso = 0;
             numero = 0;
         }
-
+        
         public Habitacion buscarHabitacion(int codigoHabitacion)
         {
-
-            Habitacion Habitacion = new Habitacion();
-
-            if (codigoHabitacion != 0)
-            {
-                try
-                {
-                    // Obtener una conexión abierta a la BD
-                    MySqlConnection conexionBD = Conexion.obtenerConexionAbierta();
-
-                    if (conexionBD == null)
-                    {
-                        throw new Exception("Fallo en Conexion a BD");
-                    }
-                    else
-                    {
-                        try
-                        {
-                            // comando a ejecutar en la BD
-                            String consulta =
-                                "SELECT id_habitacion, tipo, precio," +
-                                     "estado, piso, numero " +
-                                     "FROM habitacion WHERE id_habitacion = " +
-                                     "@id_habitacion LIMIT 1";
-
-                            using var comando = new MySqlCommand(consulta, conexionBD);
-
-                            comando.Parameters.AddWithValue("@id_habitacion", codigoHabitacion.ToString());
-                            comando.Prepare();
-
-                            // Ejecución del comando
-                            using var reader = comando.ExecuteReader();
-
-                            if (reader.HasRows)
-                            {
-                                // Obtención del cursor con el resultado de una consulta
-                                while (reader.Read())
-                                {
-                                    Habitacion.id_habitacion = reader.GetInt32(0);
-                                    Habitacion.tipo = reader.GetString(1);
-                                    Habitacion.precio = reader.GetDouble(2);
-                                    Habitacion.estado = reader.GetString(3);
-                                    Habitacion.piso = reader.GetInt32(4);
-                                    Habitacion.numero = reader.GetInt32(5);
-                                }
-                            }
-                            else
-                            {
-                                throw new Exception("No se encontraron Habitacions");
-
-                            }
-                        }
-                        catch (InvalidOperationException ex)
-                        {
-                            throw new Exception("Incidencia en busqueda de Habitacions: " + ex.Message);
-                        }
-                    }
-                }
-                catch (MySqlException ex)
-                {
-                    throw new Exception("Incidencia al buscar Habitacions: " + ex.Message);
-                }
-                finally
-                {
-                    // siempre se cierra la conexion
-                    Conexion.cerrarConexion();
-                }
-            }
-            else
-            {
-                throw new Exception("Código de Habitacion no introducido. Introducir Código de Habitacion");
-            }
-
-            return Habitacion;
-        }
-
-        public bool existeHabitacion(int codigoHabitacion)
-        {
-            bool existe = false;
+            if (codigoHabitacion == 0)
+                throw new Exception("Código de habitación no válido.");
 
             try
             {
-                // Obtener una conexión abierta a la BD
-                MySqlConnection conexionBD = Conexion.obtenerConexionAbierta();
+                using var conexionBD = Conexion.obtenerConexionAbierta() ?? throw new Exception("Fallo en conexión a BD");
+                using var comando = new MySqlCommand(
+                    "SELECT id_habitacion, tipo, precio, estado, piso, numero FROM habitacion WHERE id_habitacion = @id LIMIT 1",
+                    conexionBD);
 
-                if (conexionBD == null)
+                comando.Parameters.AddWithValue("@id", codigoHabitacion);
+
+                using var reader = comando.ExecuteReader();
+
+                if (reader.Read()) // Si hay una fila, se asignan los valores
                 {
-                    throw new Exception("Fallo en Conexion a BD");
-
+                    return new Habitacion
+                    {
+                        id_habitacion = reader.GetInt32(0),
+                        tipo = reader.GetString(1),
+                        precio = reader.GetDouble(2),
+                        estado = reader.GetString(3),
+                        piso = reader.GetInt32(4),
+                        numero = reader.GetInt32(5)
+                    };
                 }
-                else
-                {
-                    try
-                    {
-                        // Para modificar, verificar primero que exista el Habitacion.
-                        // comando a ejecutar en la BD
-                        String consulta =
-                            "SELECT id_habitacion " +
-                                 "FROM Habitacion WHERE id_habitacion = " +
-                                 "@id_habitacion LIMIT 1";
 
-                        using var comando = new MySqlCommand(consulta, conexionBD);
-
-                        comando.Parameters.AddWithValue("@id_habitacion", codigoHabitacion);
-                        comando.Prepare();
-
-                        // Ejecución del comando
-                        using var reader = comando.ExecuteReader();
-
-                        if (reader.HasRows)
-                        {
-                            existe = true;
-                        }
-                        return existe;
-                    }
-                    catch (InvalidOperationException ex)
-                    {
-                        throw new Exception("Incidencia en busqueda de Habitacion: " + ex.Message);
-                    }
-                    finally
-                    {
-
-                    }
-                }
+                throw new Exception("No se encontró la habitación.");
             }
             catch (MySqlException ex)
             {
-                throw new Exception("Incidencia al buscar Habitacion: " + ex.Message);
+                throw new Exception("Incidencia al buscar habitación: " + ex.Message);
             }
             finally
             {
-                // siempre se cierra la conexion
                 Conexion.cerrarConexion();
             }
         }
 
-        public bool guardarHabitacion(Habitacion Habitacion)
+
+        public bool existeHabitacion(int codigoHabitacion)
         {
-            bool operacion_ok = false;
             try
             {
-                // No permitir guardar registros con datos vacios
-                if (Habitacion.id_habitacion != 0 &&
-                    Habitacion.numero != 0 &&
-                    Habitacion.tipo != "" &&
-                    Habitacion.precio != 0.0 &&
-                    Habitacion.piso != 0 &&
-                    Habitacion.estado != ""
-                    )
-                {
-                    // Verificar si existe el registro. No se puede dar de alta
-                    // un registro si ya existe
-                    try
-                    {
-                        if (!existeHabitacion(Habitacion.id_habitacion))
-                        {
-                            // Obtener una conexión abierta a la BD
-                            MySqlConnection conexionBD = Conexion.obtenerConexionAbierta();
+                using var conexionBD = Conexion.obtenerConexionAbierta() ?? throw new Exception("Fallo en conexión a BD");
+                using var comando = new MySqlCommand("SELECT 1 FROM Habitacion WHERE id_habitacion = @id LIMIT 1", conexionBD);
 
-                            if (conexionBD == null)
-                            {
-                                throw new Exception("Fallo en Conexion a BD");
-                            }
-                            else
-                            {
-                                try
-                                {
-                                    string sql = "INSERT INTO Habitacion (id_habitacion, numero, tipo, " +
-                                        "precio, piso, estado) VALUES (@id_habitacion, @numero, @tipo, " +
-                                        "@precio, @piso, @estado)";
+                comando.Parameters.AddWithValue("@id", codigoHabitacion);
+                using var reader = comando.ExecuteReader();
 
-                                    // comando a ejecutar en la BD
-                                    using var comando = new MySqlCommand(sql, conexionBD);
-                                    comando.Parameters.AddWithValue("@id_habitacion", Habitacion.id_habitacion);
-                                    comando.Parameters.AddWithValue("@numero", Habitacion.numero);
-                                    comando.Parameters.AddWithValue("@tipo", Habitacion.tipo);
-                                    comando.Parameters.AddWithValue("@precio", Habitacion.precio);
-                                    comando.Parameters.AddWithValue("@piso", Habitacion.piso);
-                                    comando.Parameters.AddWithValue("@estado", Habitacion.estado);
-                                    comando.Prepare();
-
-                                    // Ejecución del comando
-                                    comando.ExecuteNonQuery();
-
-                                    operacion_ok = true;
-                                    return operacion_ok;
-
-                                }
-                                catch (MySqlException ex)
-                                {
-                                    throw new Exception("Incidencia al guardar Habitacion: " + ex.Message);
-                                }
-                            }
-                        }
-                        else
-                        {
-                            throw new Exception("Imposible guardar - Habitacion ya existe");
-                        }
-                    }
-                    catch (MySqlException ex)
-                    {
-                        throw new Exception("Incidencia: " + ex.Message);
-                    }
-                    finally
-                    {
-                        // siempre se cierra la conexion
-                        Conexion.cerrarConexion();
-                    }
-                }
-                else
-                {
-                    throw new Exception("Algunos datos vacios. Introducir todos los datos");
-                }
+                return reader.HasRows;
             }
-            catch (FormatException fex)
+            catch (MySqlException ex)
             {
-                throw new Exception("Datos incorrectos: " + fex.Message);
+                throw new Exception("Incidencia al buscar habitación: " + ex.Message);
+            }
+            finally
+            {
+                Conexion.cerrarConexion();
             }
         }
 
-        public bool actualizarHabitacion(Habitacion Habitacion)
+        public bool guardarHabitacion(Habitacion habitacion)
         {
-            Habitacion HabitacionEnBD = new Habitacion();
+            if (habitacion.numero == 0 || string.IsNullOrEmpty(habitacion.tipo) ||
+                habitacion.precio == 0.0 || habitacion.piso == 0 || string.IsNullOrEmpty(habitacion.estado))
+                throw new Exception("Algunos datos están vacíos. Introducir todos los datos");
 
-            bool operacion_ok = false;
-
-            // No permitir modificar registros con datos vacios
-            if (Habitacion.id_habitacion != 0 && Habitacion.numero != 0 &&
-                Habitacion.tipo != "" && Habitacion.precio != 0.0 &&
-                Habitacion.piso != 0 && Habitacion.estado != "")
+            try
             {
-                if (existeHabitacion(Habitacion.id_habitacion))
-                {
-                    // Modificar datos si no son identicos a los que existen en la BD.
-                    HabitacionEnBD = buscarHabitacion(Habitacion.id_habitacion);
+                using var conexionBD = Conexion.obtenerConexionAbierta() ?? throw new Exception("Fallo en conexión a BD");
+                using var comando = new MySqlCommand(
+                    "INSERT INTO Habitacion (numero, tipo, precio, piso, estado) VALUES (@numero, @tipo, @precio, @piso, @estado)",
+                    conexionBD);
 
-                    if ((Habitacion.id_habitacion == HabitacionEnBD.id_habitacion ||
-                        Habitacion.numero == HabitacionEnBD.numero ||
-                        Habitacion.tipo.Equals(HabitacionEnBD.tipo) ||
-                        Habitacion.precio == HabitacionEnBD.precio ||
-                        Habitacion.piso == HabitacionEnBD.piso ||
-                        Habitacion.estado.Equals(HabitacionEnBD.estado)) == true)
-                    {
-                        try
-                        {
-                            // Obtener una conexión abierta a la BD
-                            MySqlConnection conexionBD = Conexion.obtenerConexionAbierta();
+                comando.Parameters.AddWithValue("@numero", habitacion.numero);
+                comando.Parameters.AddWithValue("@tipo", habitacion.tipo);
+                comando.Parameters.AddWithValue("@precio", habitacion.precio);
+                comando.Parameters.AddWithValue("@piso", habitacion.piso);
+                comando.Parameters.AddWithValue("@estado", habitacion.estado);
 
-                            if (conexionBD == null)
-                            {
-                                throw new Exception("Fallo en Conexion a BD");
-                            }
-                            else
-                            {
-                                try
-                                {
-                                    string sql = "UPDATE Habitacion SET " +
-                                    "numero=@numero," +
-                                    "tipo=@tipo, precio=@precio, " +
-                                    "piso=@piso, estado =@estado where id_habitacion = @id_habitacion;";
-                                    // comando a ejecutar en la BD
-                                    using var comando = new MySqlCommand(sql, conexionBD);
-
-                                    comando.Parameters.AddWithValue("@id_habitacion", Habitacion.id_habitacion);
-                                    comando.Parameters.AddWithValue("@numero", Habitacion.numero);
-                                    comando.Parameters.AddWithValue("@tipo", Habitacion.tipo);
-                                    comando.Parameters.AddWithValue("@precio", Habitacion.precio);
-                                    comando.Parameters.AddWithValue("@piso", Habitacion.piso);
-                                    comando.Parameters.AddWithValue("@estado", Habitacion.estado);
-                                    comando.Prepare();
-
-                                    // Ejecución del comando
-                                    comando.ExecuteNonQuery();
-
-                                    operacion_ok = true;
-                                    return operacion_ok;
-                                }
-                                catch (MySqlException ex)
-                                {
-                                    throw new Exception("Incidencia al modificar Habitacion: " + ex.Message);
-                                }
-                            }
-                        }
-                        catch (MySqlException ex)
-                        {
-                            throw new Exception("Incidencia: " + ex.Message);
-                        }
-                        finally
-                        {
-                            // siempre se cierra la conexion
-                            Conexion.cerrarConexion();
-                        }
-                    }
-                    else
-                    {
-                        throw new Exception("Habitacion no modificado. Mismos datos en Base de Datos");
-                    }
-                }
-                else
-                {
-                    throw new Exception("Imposible modificación - Habitacion no existe");
-                }
+                comando.ExecuteNonQuery();
+                return true;
             }
-            else
+            catch (MySqlException ex)
             {
-                throw new Exception("Datos vacios. No se puede modificar Habitacion");
+                throw new Exception("Incidencia al guardar habitación: " + ex.Message);
+            }
+            finally
+            {
+                Conexion.cerrarConexion();
             }
         }
 
-        public bool eliminarHabitacion(Habitacion Habitacion)
+        public bool actualizarHabitacion(Habitacion habitacion)
         {
-            bool operacion_ok = false;
+            if (habitacion.id_habitacion == 0 || habitacion.numero == 0 ||
+                string.IsNullOrEmpty(habitacion.tipo) || habitacion.precio == 0.0 ||
+                habitacion.piso == 0 || string.IsNullOrEmpty(habitacion.estado))
+                throw new Exception("Datos vacíos. No se puede modificar la habitación");
 
-            // No se puede eliminar Habitacion si codigo vacio
-            if (Habitacion.id_habitacion != 0)
+            if (!existeHabitacion(habitacion.id_habitacion))
+                throw new Exception("Imposible modificación - Habitación no existe");
+
+            var habitacionEnBD = buscarHabitacion(habitacion.id_habitacion);
+
+            if (habitacion.Equals(habitacionEnBD))
+                throw new Exception("Habitación no modificada. Mismos datos en Base de Datos");
+
+            try
             {
-                if (existeHabitacion(Habitacion.id_habitacion))
-                {
-                    try
-                    {
-                        // Obtener una conexión abierta a la BD
-                        MySqlConnection conexionBD = Conexion.obtenerConexionAbierta();
+                using var conexionBD = Conexion.obtenerConexionAbierta() ?? throw new Exception("Fallo en conexión a BD");
+                using var comando = new MySqlCommand(
+                    "UPDATE Habitacion SET numero=@numero, tipo=@tipo, precio=@precio, piso=@piso, estado=@estado WHERE id_habitacion=@id",
+                    conexionBD);
 
-                        if (conexionBD == null)
-                        {
-                            throw new Exception("Fallo en Conexion a BD");
-                        }
-                        else
-                        {
-                            try
-                            {
-                                string sql = "DELETE FROM habitacion " +
-                                    "WHERE id_habitacion=@id_habitacion;";
-                                // comando a ejecutar en la BD
-                                using var comando = new MySqlCommand(sql, conexionBD);
+                comando.Parameters.AddWithValue("@id", habitacion.id_habitacion);
+                comando.Parameters.AddWithValue("@numero", habitacion.numero);
+                comando.Parameters.AddWithValue("@tipo", habitacion.tipo);
+                comando.Parameters.AddWithValue("@precio", habitacion.precio);
+                comando.Parameters.AddWithValue("@piso", habitacion.piso);
+                comando.Parameters.AddWithValue("@estado", habitacion.estado);
 
-                                comando.Parameters.AddWithValue("@id_habitacion", Habitacion.id_habitacion);
-                                comando.Prepare();
-
-                                // Ejecución del comando
-                                comando.ExecuteNonQuery();
-
-                                operacion_ok = true;
-                                return operacion_ok;
-                            }
-                            catch (MySqlException ex)
-                            {
-                                throw new Exception("Incidencia al eliminar Habitacion: " + ex.Message);
-                            }
-                        }
-                    }
-                    catch (MySqlException ex)
-                    {
-                        throw new Exception("Incidencia: " + ex.Message);
-                    }
-                    finally
-                    {
-                        // siempre se cierra la conexion
-                        Conexion.cerrarConexion();
-                    }
-                }
-                else
-                {
-                    throw new Exception("Imposible eliminación - Habitacion no existe");
-                }
+                comando.ExecuteNonQuery();
+                return true;
             }
-            else
+            catch (MySqlException ex)
             {
-                throw new Exception("Datos vacios. No se puede eliminar Habitacion");
+                throw new Exception("Incidencia al modificar habitación: " + ex.Message);
+            }
+            finally
+            {
+                Conexion.cerrarConexion();
+            }
+        }
+
+
+        public bool eliminarHabitacion(Habitacion habitacion)
+        {
+            if (habitacion.id_habitacion == 0)
+                throw new Exception("Datos vacíos. No se puede eliminar Habitación");
+
+            if (!existeHabitacion(habitacion.id_habitacion))
+                throw new Exception("Imposible eliminación - Habitación no existe");
+
+            try
+            {
+                using var conexionBD = Conexion.obtenerConexionAbierta() ?? throw new Exception("Fallo en conexión a BD");
+                using var comando = new MySqlCommand("DELETE FROM habitacion WHERE id_habitacion=@id", conexionBD);
+
+                comando.Parameters.AddWithValue("@id", habitacion.id_habitacion);
+                comando.ExecuteNonQuery();
+
+                return true;
+            }
+            catch (MySqlException ex)
+            {
+                throw new Exception("Incidencia al eliminar Habitación: " + ex.Message);
+            }
+            finally
+            {
+                Conexion.cerrarConexion();
             }
         }
     }

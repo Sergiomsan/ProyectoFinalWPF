@@ -16,21 +16,11 @@ using ProyectoFinal.VistaModelo;
 
 namespace ProyectoFinal.VIsta
 {
-    /// <summary>
-    /// Lógica de interacción para MostrarReservaView.xaml
-    /// </summary>
     public partial class MostrarReservaView : Window
     {
         public Window reservaView;
 
         ReservaViewModel reservaViewModel = new ReservaViewModel();
-
-        public MostrarReservaView()
-        {
-            InitializeComponent();
-            List<Reserva> listReservas = reservaViewModel.cargarReservas();
-            listaReservas.ItemsSource = listReservas;
-        }
 
         public MostrarReservaView(Window reservaView)
         {

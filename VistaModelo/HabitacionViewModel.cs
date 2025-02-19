@@ -152,7 +152,6 @@ namespace ProyectoFinal.VistaModelo
 
                 if (!Habitacion.guardarHabitacion(Habitacion))
                 {
-                    // Habitacion no guardado correctamente
                     throw new Exception("Fallo al Guardar Habitacion");
                 }
             }
@@ -170,7 +169,6 @@ namespace ProyectoFinal.VistaModelo
 
                 if (!Habitacion.actualizarHabitacion(Habitacion))
                 {
-                    // Habitacion no guardado correctamente
                     throw new Exception("Fallo al Actualizar Habitacion");
                 }
             }
@@ -188,7 +186,6 @@ namespace ProyectoFinal.VistaModelo
 
                 if (!habitacion.eliminarHabitacion(habitacion))
                 {
-                    // Habitacion no eliminado correctamente
                     throw new Exception("Fallo al Eliminar Habitacion");
                 }
             }

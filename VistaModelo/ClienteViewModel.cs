@@ -134,7 +134,6 @@ namespace ProyectoFinal
 
                 if (!Cliente.guardarCliente(Cliente))
                 {
-                    // Cliente no guardado correctamente
                     throw new Exception("Fallo al Guardar Cliente");
                 }
             }
@@ -152,7 +151,6 @@ namespace ProyectoFinal
 
                 if (!Cliente.actualizarCliente(Cliente))
                 {
-                    // Cliente no guardado correctamente
                     throw new Exception("Fallo al Actualizar Cliente");
                 }
             }
@@ -170,7 +168,6 @@ namespace ProyectoFinal
 
                 if (!Cliente.eliminarCliente(Cliente))
                 {
-                    // Cliente no eliminado correctamente
                     throw new Exception("Fallo al Eliminar Cliente");
                 }
             }

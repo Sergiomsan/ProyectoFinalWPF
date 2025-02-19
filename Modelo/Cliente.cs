@@ -58,7 +58,6 @@ namespace ProyectoFinal.Modelo
             {
                 try
                 {
-                    // Obtener una conexión abierta a la BD
                     MySqlConnection conexionBD = Conexion.obtenerConexionAbierta();
 
                     if (conexionBD == null)
@@ -69,7 +68,6 @@ namespace ProyectoFinal.Modelo
                     {
                         try
                         {
-                            // comando a ejecutar en la BD
                             String consulta =
                                 "SELECT dni, nombre, " +
                                      "telefono, email " +
@@ -81,12 +79,10 @@ namespace ProyectoFinal.Modelo
                             comando.Parameters.AddWithValue("@dni", codigoCliente);
                             comando.Prepare();
 
-                            // Ejecución del comando
                             using var reader = comando.ExecuteReader();
 
                             if (reader.HasRows)
                             {
-                                // Obtención del cursor con el resultado de una consulta
                                 while (reader.Read())
                                 {
                                     Cliente.dni = reader.GetString(0);
@@ -113,7 +109,6 @@ namespace ProyectoFinal.Modelo
                 }
                 finally
                 {
-                    // siempre se cierra la conexion
                     Conexion.cerrarConexion();
                 }
             }
@@ -131,7 +126,6 @@ namespace ProyectoFinal.Modelo
 
             try
             {
-                // Obtener una conexión abierta a la BD
                 MySqlConnection conexionBD = Conexion.obtenerConexionAbierta();
 
                 if (conexionBD == null)
@@ -143,12 +137,9 @@ namespace ProyectoFinal.Modelo
                 {
                     try
                     {
-                        // Para modificar, verificar primero que exista el Cliente.
-                        // comando a ejecutar en la BD
                         String consulta =
-                            "SELECT dni " +
-                                 "FROM Cliente WHERE dni = " +
-                                 "@codigoCliente LIMIT 1";
+                            "SELECT dni FROM Cliente " +
+                            "WHERE dni = @codigoCliente LIMIT 1";
 
                         using var comando = new MySqlCommand(consulta, conexionBD);
 
@@ -180,7 +171,6 @@ namespace ProyectoFinal.Modelo
             }
             finally
             {
-                // siempre se cierra la conexion
                 Conexion.cerrarConexion();
             }
         }
@@ -190,19 +180,15 @@ namespace ProyectoFinal.Modelo
             bool operacion_ok = false;
             try
             {
-                // No permitir guardar registros con datos vacios
                 if (Cliente.dni != "" &&
                     Cliente.nombre != "" &&
                     Cliente.email != "" &&
                     Cliente.telefono != "")
                 {
-                    // Verificar si existe el registro. No se puede dar de alta
-                    // un registro si ya existe
                     try
                     {
                         if (!existeCliente(Cliente.dni))
                         {
-                            // Obtener una conexión abierta a la BD
                             MySqlConnection conexionBD = Conexion.obtenerConexionAbierta();
 
                             if (conexionBD == null)
@@ -213,11 +199,8 @@ namespace ProyectoFinal.Modelo
                             {
                                 try
                                 {
-                                    string sql = "INSERT INTO cliente (dni, " +
-                                        "nombre, email, telefono) VALUES (@dni, @nombre, @email, " +
-                                        "@telefono)";
+                                    string sql = "INSERT INTO cliente (dni, nombre, email, telefono) VALUES (@dni, @nombre, @email, @telefono)";
 
-                                    // comando a ejecutar en la BD
                                     using var comando = new MySqlCommand(sql, conexionBD);
                                     comando.Parameters.AddWithValue("@dni", Cliente.dni);
                                     comando.Parameters.AddWithValue("@nombre", Cliente.nombre);
@@ -225,7 +208,6 @@ namespace ProyectoFinal.Modelo
                                     comando.Parameters.AddWithValue("@telefono", Cliente.telefono);
                                     comando.Prepare();
 
-                                    // Ejecución del comando
                                     comando.ExecuteNonQuery();
 
                                     operacion_ok = true;
@@ -249,7 +231,6 @@ namespace ProyectoFinal.Modelo
                     }
                     finally
                     {
-                        // siempre se cierra la conexion
                         Conexion.cerrarConexion();
                     }
                 }
@@ -270,13 +251,11 @@ namespace ProyectoFinal.Modelo
 
             bool operacion_ok = false;
 
-            // No permitir modificar registros con datos vacios
             if (Cliente.dni != "" && Cliente.nombre != "" &&
                 Cliente.telefono != "" && Cliente.email != "")
             {
                 if (existeCliente(Cliente.dni))
                 {
-                    // Modificar datos si no son identicos a los que existen en la BD.
                     ClienteEnBD = buscarCliente(Cliente.dni);
 
                     if ((Cliente.dni.Equals(ClienteEnBD.dni) ||
@@ -286,7 +265,6 @@ namespace ProyectoFinal.Modelo
                     {
                         try
                         {
-                            // Obtener una conexión abierta a la BD
                             MySqlConnection conexionBD = Conexion.obtenerConexionAbierta();
 
                             if (conexionBD == null)
@@ -301,7 +279,7 @@ namespace ProyectoFinal.Modelo
                                     "dni=@dni, " +
                                     "nombre=@nombre, telefono=@telefono, " +
                                     "email=@email where dni = @dni;";
-                                    // comando a ejecutar en la BD
+
                                     using var comando = new MySqlCommand(sql, conexionBD);
 
                                     comando.Parameters.AddWithValue("@dni", Cliente.dni);
@@ -310,7 +288,6 @@ namespace ProyectoFinal.Modelo
                                     comando.Parameters.AddWithValue("@email", Cliente.email);
                                     comando.Prepare();
 
-                                    // Ejecución del comando
                                     comando.ExecuteNonQuery();
 
                                     operacion_ok = true;
@@ -328,7 +305,6 @@ namespace ProyectoFinal.Modelo
                         }
                         finally
                         {
-                            // siempre se cierra la conexion
                             Conexion.cerrarConexion();
                         }
                     }
@@ -352,14 +328,12 @@ namespace ProyectoFinal.Modelo
         {
             bool operacion_ok = false;
 
-            // No se puede eliminar Cliente si codigo vacio
             if (Cliente.dni != "")
             {
                 if (existeCliente(Cliente.dni))
                 {
                     try
                     {
-                        // Obtener una conexión abierta a la BD
                         MySqlConnection conexionBD = Conexion.obtenerConexionAbierta();
 
                         if (conexionBD == null)
@@ -372,13 +346,13 @@ namespace ProyectoFinal.Modelo
                             {
                                 string sql = "DELETE FROM cliente " +
                                     "WHERE dni=@dni;";
-                                // comando a ejecutar en la BD
+
                                 using var comando = new MySqlCommand(sql, conexionBD);
 
                                 comando.Parameters.AddWithValue("@dni", Cliente.dni);
                                 comando.Prepare();
 
-                                // Ejecución del comando
+
                                 comando.ExecuteNonQuery();
 
                                 operacion_ok = true;
@@ -396,7 +370,6 @@ namespace ProyectoFinal.Modelo
                     }
                     finally
                     {
-                        // siempre se cierra la conexion
                         Conexion.cerrarConexion();
                     }
                 }
